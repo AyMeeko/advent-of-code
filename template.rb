@@ -3,26 +3,23 @@
 require 'pry'
 require 'spec_helper'
 
-def input_file
-  File.readlines("#{__dir__}/input.txt")
+def input_file(file_name)
+  File.readlines("#{__dir__}/#{file_name}")
 end
 
-def calculate
+def part1(file_name)
   4
 end
 
-def solve
+def part2(file_name)
   4
 end
 
-puts "The answer is #{solve}."
+# puts "The answer to part1 is #{part1('input.txt')}."
+# puts "The answer to part2 is #{part2('input.txt')}."
 
 RSpec.describe "#{File.basename(__dir__)} examples" do
-  [
-    [12, 2]
-  ].each do |input, output|
-    it "calculates an input of #{input} results in #{output} output" do
-      expect(calculate(input)).to equal(output)
-    end
+  it 'determines 2 passwords are valid' do
+    expect(part1('example.txt')).to eq('')
   end
 end
