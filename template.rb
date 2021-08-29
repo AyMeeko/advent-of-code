@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'pry'
+require 'debug'
 require 'spec_helper'
 
 def input_file(file_name)
