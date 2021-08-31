@@ -13,9 +13,22 @@ class Bag
   end
 
   def ancestors
+    # returns list of parents by name
     grandparents = parents.map(&:ancestors)
     immediate_parents = parents.map(&:name)
-    immediate_parents + grandparents
+    [immediate_parents + grandparents].flatten.uniq
+  end
+
+  def children_count(ruleset)
+    # returns number of bags this bag must contain
+    return 0 if children.empty?
+
+    count = 0
+    children.each do |bag_color, capacity|
+      child = ruleset.send(bag_color)
+      count += capacity * (1 + child.children_count(ruleset))
+    end
+    count
   end
 end
 
@@ -71,7 +84,7 @@ def parse_rule(rule)
   Bag.new(new_color, children)
 end
 
-def construct_rules(rules)
+def construct_ruleset(rules)
   ruleset = Ruleset.new
 
   rules.each do |rule|
@@ -89,24 +102,23 @@ def construct_rules(rules)
   ruleset
 end
 
-def identify_parents_of(bag)
-  bag.ancestors.flatten.uniq
-end
-
 def part1(file_name, bag_color)
   rules = input_file(file_name)
 
-  ruleset = construct_rules(rules)
+  ruleset = construct_ruleset(rules)
   bag = ruleset.send(bag_color.gsub(' ', '_'))
-  identify_parents_of(bag).length
+  bag.ancestors.length
 end
 
-def part2(file_name)
-  4
+def part2(file_name, bag_color)
+  rules = input_file(file_name)
+  ruleset = construct_ruleset(rules)
+  bag = ruleset.send(bag_color.gsub(' ', '_'))
+  bag.children_count(ruleset)
 end
 
 puts "The answer to part1 is #{part1('input.txt', 'shiny gold')}."
-# puts "The answer to part2 is #{part2('input.txt')}."
+puts "The answer to part2 is #{part2('input.txt', 'shiny gold')}."
 
 RSpec.describe "#{File.basename(__dir__)} examples" do
   context 'testing parse_rule' do
@@ -152,6 +164,20 @@ RSpec.describe "#{File.basename(__dir__)} examples" do
   ].each do |color, number|
     it "determines #{number} bags can contain #{color}" do
       expect(part1('example.txt', color)).to eq(number)
+    end
+  end
+
+  [
+    ['shiny gold', 126],
+    ['dark red', 62],
+    ['dark orange', 30],
+    ['dark yellow', 14],
+    ['dark green', 6],
+    ['dark blue', 2],
+    ['dark violet', 0]
+  ].each do |outer_bag, capacity|
+    it "determines one #{outer_bag} bag must contain #{capacity} other bags" do
+      expect(part2('example2.txt', outer_bag)).to eq(capacity)
     end
   end
 end
