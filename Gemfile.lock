@@ -51,6 +51,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-darwin-22
 
 DEPENDENCIES
   debug!
@@ -58,4 +59,4 @@ DEPENDENCIES
   rubocop
 
 BUNDLED WITH
-   2.2.25
+   2.4.20
